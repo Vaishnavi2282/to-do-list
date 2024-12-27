@@ -108,4 +108,16 @@ async def delete_todo(todo_id: str, token: str = Depends(oauth2_scheme)):
 # Mark Todo as Complete/Incomplete
 @app.patch("/todos/{todo_id}/complete")
 async def mark_complete(todo_id: str, token: str = Depends(oauth2_scheme)):
-    payload = decode_access
+    payload = decode_access_token(token)
+    if payload is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+    
+    result = todos_collection.update_one(
+        {"_id": ObjectId(todo_id), "user": payload["sub"]},
+        {"$set": {"is_complete": True}}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Todo not found")
+    
+    return {"message": "Todo marked as complete"}
