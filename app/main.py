@@ -121,3 +121,7 @@ async def mark_complete(todo_id: str, token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Todo not found")
     
     return {"message": "Todo marked as complete"}
+
+@app.get("/")
+def read_root():
+    return {"message": "Hello, World!"}
