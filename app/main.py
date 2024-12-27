@@ -12,6 +12,11 @@ from database import users_collection, todos_collection
 
 app = FastAPI()
 
+@app.get("/")
+def read_root():
+    return {"message": "Hello, World!"}
+
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 # User Signup
